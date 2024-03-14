@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MDPCharacter.h"
+#include "MDP_PlayerState.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -67,6 +68,28 @@ void AMDPCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+}
+
+void AMDPCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (const AMDP_PlayerState* MDP_PlayerState = NewController->GetPlayerState<AMDP_PlayerState>())
+	{
+		MDP_PlayerState->GetAbilitySystemComponent()->SetAvatarActor(this);
+	}
+}
+
+void AMDPCharacter::UnPossessed()
+{
+
+	Super::UnPossessed();
+
+	if (const AMDP_PlayerState* MDP_PlayerState = GetPlayerState<AMDP_PlayerState>())
+	{
+		MDP_PlayerState->GetAbilitySystemComponent()->SetAvatarActor(nullptr);
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////
